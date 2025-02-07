@@ -6,8 +6,11 @@ name = "pypi"
 [packages]
 django = "==5.1"
 python-json-logger = "==3.2.0"
+psycopg2 = "==2.9.10"
+argon2-cffi = "==23.1.0"
 
 [dev-packages]
+flake8 = "==7.1.1"
 
 [requires]
 python_version = "3.12"

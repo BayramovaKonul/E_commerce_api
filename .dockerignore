@@ -1,0 +1,5 @@
+.env
+.env.db
+src/logs/general_logs.log
+
+
