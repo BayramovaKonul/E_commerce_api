@@ -24,13 +24,11 @@ INSTALLED_APPS = [
     "e_commerce",
     "account",
     # installed apps
-    # 'autoslug',
-    # 'ckeditor',
-    # 'rest_framework',
+    'rest_framework',
     # "debug_toolbar",
-    # 'rest_framework_simplejwt',
+    'rest_framework_simplejwt',
     # 'rest_framework_simplejwt.token_blacklist',
-    # 'drf_yasg',
+    'drf_yasg',
     # 'django_celery_beat',
 ]
 
@@ -95,31 +93,31 @@ MEDIA_URL = "/media/"
 # Path where media is stored'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ],
-#     'DEFAULT_THROTTLE_CLASSES': [
-#         # 'rest_framework.throttling.AnonRateThrottle',   # IP based checking
-#         # 'rest_framework.throttling.UserRateThrottle',    # pk based checking after login, keep rate in cache-backend
-#         'rest_framework.throttling.ScopedRateThrottle',   # general scope for all api's
-#     ],
-#     'DEFAULT_THROTTLE_RATES': {
-#         # 'anon': '3/min',
-#         # 'user': '10/min',
-#         'create_article': '3/min',
-#         'regular_user':'5/hour',
-#         'admin': '10/hour',
-#         'update_profile' : '5/hour',
-#         'add_bookmark' : '5/min',
-#         'delete_bookmark' : '20/min',
-#         'adding_follower':'15/min',
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     # 'rest_framework.throttling.AnonRateThrottle',   # IP based checking
+    #     # 'rest_framework.throttling.UserRateThrottle',    # pk based checking after login, keep rate in cache-backend
+    #     'rest_framework.throttling.ScopedRateThrottle',   # general scope for all api's
+    # ],
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     # 'anon': '3/min',
+    #     # 'user': '10/min',
+    #     'create_article': '3/min',
+    #     'regular_user':'5/hour',
+    #     'admin': '10/hour',
+    #     'update_profile' : '5/hour',
+    #     'add_bookmark' : '5/min',
+    #     'delete_bookmark' : '20/min',
+    #     'adding_follower':'15/min',
 #     },
-    # 'THROTTLE_CACHE':'alternate'
-# }
+#     'THROTTLE_CACHE':'alternate'
+}
 
 # Default primary key field type
 
