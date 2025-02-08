@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUserModel
+from .models import CustomUserModel, UserProfileModel
 
 @admin.register(CustomUserModel)
 class CustomUserAdmin(UserAdmin):
@@ -12,13 +12,13 @@ class CustomUserAdmin(UserAdmin):
 
     list_display = ("email", "is_staff", "is_active",)
     list_filter = ("email", "is_staff", "is_active",)
-    search_fields = ("email","fullname")
+    search_fields = ("email","first_name", "last_name")
     ordering = ("email",)
     readonly_fields = ("date_joined",)
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        (_("Personal Info"), {"fields": ("fullname",)}),
+        (_("Personal Info"), {"fields": ("first_name", "last_name")}),
         (_("Permissions"), {"fields": ("is_staff", "is_active", "groups", "user_permissions")}),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
@@ -26,8 +26,14 @@ class CustomUserAdmin(UserAdmin):
         (None, {
             "classes": ("wide",),
             "fields": (
-                "email", "fullname", "password1", "password2", "is_staff",
+                "email", "first_name", "last_name", "password1", "password2", "is_staff",
                 "is_active", "is_superuser",
             )}
         ),
     )
+
+@admin.register(UserProfileModel)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['user__email','birthday', 'phone_number']
+    search_fields = ['user__email', 'birthday'] 
+    list_filter = ['birthday']
