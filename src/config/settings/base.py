@@ -125,6 +125,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "account.CustomUserModel"
 
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
