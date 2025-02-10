@@ -100,23 +100,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    # 'DEFAULT_THROTTLE_CLASSES': [
-    #     # 'rest_framework.throttling.AnonRateThrottle',   # IP based checking
-    #     # 'rest_framework.throttling.UserRateThrottle',    # pk based checking after login, keep rate in cache-backend
-    #     'rest_framework.throttling.ScopedRateThrottle',   # general scope for all api's
-    # ],
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     # 'anon': '3/min',
-    #     # 'user': '10/min',
-    #     'create_article': '3/min',
-    #     'regular_user':'5/hour',
-    #     'admin': '10/hour',
-    #     'update_profile' : '5/hour',
-    #     'add_bookmark' : '5/min',
-    #     'delete_bookmark' : '20/min',
-    #     'adding_follower':'15/min',
-#     },
-#     'THROTTLE_CACHE':'alternate'
+
 }
 
 # Default primary key field type
@@ -170,28 +154,28 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.ScryptPasswordHasher",
 ]
 
-# SIMPLE_JWT = {
-#     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=45),
-#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-#     "ROTATE_REFRESH_TOKENS": False,  #create refreh and access token when you send refresh token
-#     "BLACKLIST_AFTER_ROTATION": False,  # write previous refresh token to the blacklist
-#     "UPDATE_LAST_LOGIN": False,
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),  # Default is 5 minutes; increase as needed
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Default is 1 day
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 
-#     "TOKEN_OBTAIN_SERIALIZER": "account.serializers.CustomTokenObtainPairSerializer",
-#     "TOKEN_REFRESH_SERIALIZER": "account.serializers.CustomTokenRefreshSerializer",
-# }
 
-# SWAGGER_SETTINGS = {
-#     'SECURITY_DEFINITIONS': {
-#         'Bearer': {
-#             'type': 'apiKey',
-#             'name': 'Authorization',  # This is where the token will be passed
-#             'in': 'header'  # The token is sent in the header
-#         }
-#     },
-#     'USE_SESSION_AUTH': False,  # Disable session auth if you're using token-based auth
-# }
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',  # This is where the token will be passed
+            'in': 'header'  # The token is sent in the header
+        }
+    },
+    'USE_SESSION_AUTH': False, 
+}
 
 # CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 # CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')

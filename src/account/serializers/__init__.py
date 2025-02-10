@@ -1,1 +1,2 @@
 from .register import UserRegisterSerializer
+from .update_profile import UserProfileSerializer

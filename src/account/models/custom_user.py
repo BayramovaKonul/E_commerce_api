@@ -61,3 +61,5 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return "{} -> {} -> {}".format(self.email, self.first_name, self.last_name)
+    
+    

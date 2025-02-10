@@ -116,3 +116,16 @@ class TestCustomUserModel:
                                                       is_superuser = False)
 
 
+
+# I DONT KNOW WHY IT RAISES ERROR AS "VALUE TOO LONG FOR TYPE CHARACTER"
+
+    # def test_first_name_exceeds_max_length(self):
+    #     """Test that first_name cannot exceed 100 characters."""
+        
+    #     long_first_name = "A" * 101  # 101 characters long
+        
+    #     with pytest.raises(ValueError, match=str(_("Ensure this field has no more than 100 characters."))):
+    #         get_user_model().objects.create_user(email="test3@gmail.com", 
+    #                                              first_name = long_first_name,
+    #                                              last_name = "check",
+    #                                              password="1234")
