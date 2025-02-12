@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUserModel, UserProfileModel
+from .models import CustomUserModel, UserProfileModel, ForgotPasswordTokenModel
 
 @admin.register(CustomUserModel)
 class CustomUserAdmin(UserAdmin):
@@ -31,6 +31,13 @@ class CustomUserAdmin(UserAdmin):
             )}
         ),
     )
+
+@admin.register(ForgotPasswordTokenModel)
+class ForgotPasswordAdmin(admin.ModelAdmin):
+    list_display = ['user__email','token', 'is_used']
+    search_fields = ['user__email', 'is_used'] 
+    list_filter = ['is_used', 'expired_at']
+
 
 @admin.register(UserProfileModel)
 class ProfileAdmin(admin.ModelAdmin):
