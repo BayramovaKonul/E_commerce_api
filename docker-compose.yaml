@@ -3,8 +3,8 @@ services:
     build:
       context: .
     #find dockerfile to take image as a base
-    # volumes:
-    #   - ./src:/app
+    volumes:
+      - ./src:/app
     # mount src folder to the volume in app to take changes
     ports:
       - "8000:8000"

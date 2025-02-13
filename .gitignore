@@ -1,4 +1,8 @@
 .env
 .env.db
 src/logs
+__pycache__
+
+
+
 
