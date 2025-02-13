@@ -8,7 +8,8 @@ import uuid
 User= get_user_model()
 
 def get_expiry_date():
-    return timezone.now() + timedelta(days=1)
+    expiration_duration = 1
+    return timezone.now() + timedelta(days=expiration_duration)
 
 class ForgotPasswordTokenModel(models.Model):
     user=models.ForeignKey(User, on_delete=models.CASCADE,

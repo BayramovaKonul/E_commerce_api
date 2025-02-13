@@ -9,6 +9,8 @@ from drf_yasg import openapi
 from django.contrib.auth import get_user_model
 from ..tasks import send_password_reset_email
 from ..models import ForgotPasswordTokenModel
+from django.conf import settings
+
 User= get_user_model()
 
 
@@ -33,7 +35,7 @@ class RequestForgotPasswordView(APIView):
             token = ForgotPasswordTokenModel.objects.create(user=user, is_used=False)
 
             # Send password reset email 
-            reset_link = f"http://example.com/forgot-password?token={token.token}"
+            reset_link = f"{settings.RESET_PASSWORD_URL}?token={token.token}"
             send_password_reset_email(email, reset_link)
 
             return Response({"message": "Password reset email sent.",
@@ -56,14 +58,7 @@ class ConfirmForgotPasswordView(APIView):
     def post(self, request, *args, **kwargs):
         token = request.data['token']
 
-        # Check if token exists and is valid
         reset_token = ForgotPasswordTokenModel.objects.filter(token=token, is_used=False).first()
-
-        if not reset_token:
-            return Response({"message": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if reset_token.is_expired():
-            return Response({"message": "The token has expired."}, status=status.HTTP_400_BAD_REQUEST)
 
         user = reset_token.user
 

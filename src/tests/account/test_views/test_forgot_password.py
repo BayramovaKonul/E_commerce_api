@@ -6,24 +6,23 @@ from unittest.mock import patch
 from ...confest import user, anonymous_client
 from django.contrib.auth import get_user_model
 from django.urls import reverse
-
-User = get_user_model()
+from django.conf import settings
+from django.core import mail
 
 @pytest.mark.django_db
 
 class TestForgotPasswordView:
 
-    @patch("account.tasks.send_password_reset_email")
-    def test_request_forgot_password_valid_email(self, mock_send_email, user, anonymous_client):
+    def test_request_forgot_password_valid_email(self, user, anonymous_client):
         """Test getting forgot-password email using a valid email address"""
 
+        # Set the language to English for the test
         from django.utils.translation import activate
-        activate('en')  # Ensures test runs in English without unwanted locale prefix
+        activate('en')
 
         url = reverse("forgot_password")
-        
         data = {'email': user.email}
-        
+
         response = anonymous_client.post(url, data, format="json")
         
         assert response.status_code == status.HTTP_200_OK
@@ -35,11 +34,14 @@ class TestForgotPasswordView:
         assert token is not None
         assert not token.is_used
         
-        # Verify that the password reset email was sent with the correct URL
-        mock_send_email.assert_called_once_with(
-            user.email,
-            f"http://example.com/forgot-password?token={token.token}"
-        )
+        # Assert that an email was sent
+        assert len(mail.outbox) == 1  # Ensure exactly one email was sent
+        email = mail.outbox[0]
+        
+        # Verify the email details (subject, recipient, and body)
+        assert email.subject == "Password Reset Request"
+        assert email.to == [user.email]
+        assert f"{settings.RESET_PASSWORD_URL}?token={token.token}" in email.body
 
 
     def test_request_forgot_password_invalid_email(self, anonymous_client):

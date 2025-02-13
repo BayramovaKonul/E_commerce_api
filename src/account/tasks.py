@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.conf import settings
 
 def send_password_reset_email(email, reset_link):
     subject = "Password Reset Request"
@@ -23,7 +24,7 @@ def send_password_reset_email(email, reset_link):
     send_mail(
         subject=subject,
         message=plain_message,  # Fallback for non-HTML email clients
-        from_email="konul.bairamovaa@gmail.com",
+        from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[email],
         html_message=html_message,  # Sends HTML email
     )

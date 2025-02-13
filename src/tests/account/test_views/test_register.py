@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from ...confest import anonymous_client, user
-
+from django.conf import settings
 
 
 @pytest.mark.django_db
@@ -107,23 +107,28 @@ def test_register_view_with_invalid_email(anonymous_client):
 
 # SINCE WE ARE IN DEVELOPMENT STAGE, I DISABLED PASSWORD VALIDATORS, BUT USUALLY IT IS FOR WEAK PASSWORDS
 
-# @pytest.mark.django_db
-# def test_register_view_with_weak_password(anonymous_client):
-#     """Test that weak passwords are rejected"""
-#     url = reverse("register")
+if settings.DEBUG == False:
 
-#     data = {
-#         "email": "testweak@gmail.com",
-#         "first_name": "Test",
-#         "last_name": "Weak",
-#         "password1": "1234",
-#         "password2": "1234"
-#     }
+    @pytest.mark.django_db
+    def test_register_view_with_weak_password(anonymous_client):
+        """Test that weak passwords are rejected"""
 
-#     res = anonymous_client.post(url, data=data, format="json")
 
-#     assert res.status_code == 400
-#     assert "password1" in res.data 
+        url = reverse("register")
+
+        data = {
+            "email": "testweak@gmail.com",
+            "first_name": "Test",
+            "last_name": "Weak",
+            "password1": "1234",
+            "password2": "1234"
+        }
+
+        res = anonymous_client.post(url, data=data, format="json")
+
+        assert not res.status_code == 200
+        assert "password1" in res.data 
+        assert res.data["password1"] == ["Weak password"]
 
 
 

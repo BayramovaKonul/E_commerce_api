@@ -7,8 +7,6 @@ from rest_framework.exceptions import ValidationError
 from django.contrib.auth.hashers import check_password
 from ...confest import user
 
-User = get_user_model()
-
 @pytest.mark.django_db
 class TestRequestForgotPasswordSerializer:
     def test_forgot_password_request_with_valid_email(self, user):

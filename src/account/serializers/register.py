@@ -19,14 +19,16 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = CustomUserModel
         fields = ['first_name', 'last_name', 'email', 'password1', 'password2']
 
+
+    def validate_email(self, email):
+        if CustomUserModel.objects.filter(email=email).exists():
+            raise serializers.ValidationError("This email is already registered.")  
+        return email
+        
+
     def validate(self, data):
-        email = data.get('email')
         password1 = data.get('password1')
         password2 = data.get('password2')
-
-        # Check for unique email
-        if CustomUserModel.objects.filter(email=email).exists():
-            raise serializers.ValidationError({"email": "This email is already registered."})
 
         if password1 != password2:
             raise serializers.ValidationError({"password2": "Passwords must match."})
