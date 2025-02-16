@@ -24,6 +24,51 @@ services:
     env_file:
       - .env.db
 
+  
+  redis:
+    image: redis:7.4.2-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  celery:
+    build:
+      context: .
+    volumes:
+      - ./src:/app
+    env_file:
+      - .env
+    depends_on:
+      - app
+      - redis
+    command: sh -c "celery -A config worker --loglevel=INFO"
+
+  flower:  # celery interface to track tasks
+    build:
+      context: .
+    volumes:
+      - ./src:/app
+    env_file:
+      - .env
+    depends_on:
+      - app
+      - redis
+    command: sh -c "celery -A config flower"
+    ports:
+      - "5557:5555"
+
+  celery-beat:
+    build:
+      context: .
+    volumes:
+      - ./src:/app
+    env_file:
+      - .env
+    depends_on:
+      - app
+      - redis
+    command: sh -c "celery -A config beat"
+
 volumes:
   db_data:
   # volume in the host

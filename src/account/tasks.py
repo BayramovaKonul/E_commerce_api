@@ -1,5 +1,6 @@
 from django.core.mail import send_mail
 from django.conf import settings
+from celery import shared_task
 
 def send_password_reset_email(email, reset_link):
     subject = "Password Reset Request"
@@ -28,3 +29,5 @@ def send_password_reset_email(email, reset_link):
         recipient_list=[email],
         html_message=html_message,  # Sends HTML email
     )
+
+

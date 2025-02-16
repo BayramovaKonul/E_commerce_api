@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     # 'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
-    # 'django_celery_beat',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
@@ -177,8 +177,8 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False, 
 }
 
-# CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
-# CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND')
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Use SMTP for real email
