@@ -14,7 +14,8 @@ def user():
     return get_user_model().objects.create_user(email='test@gmail.com',
                                                 first_name = "konul",
                                                 last_name = "bayramova",
-                                                password='1234')
+                                                password='1234',
+                                                is_active = True)
 
 
 @pytest.fixture

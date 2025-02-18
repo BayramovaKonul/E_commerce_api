@@ -18,6 +18,7 @@ def test_token_obtain_view_with_valid_credentials(user, anonymous_client):
     }
 
     res=anonymous_client.post(url, data=data, format='json')
+    print(res)
 
     assert res.status_code==status.HTTP_200_OK
 
@@ -50,7 +51,9 @@ def test_token_obtain_view_with_invalid_credentials(user, anonymous_client):
 @pytest.mark.django_db
 def test_token_refresh_view_with_valid_credentials(user, anonymous_client):
     """Test getting access token using logged in user's refresh token"""
+
     refresh = RefreshToken.for_user(user)
+    print(refresh)
 
     # Endpoint and payload
     url = reverse("token_refresh")
