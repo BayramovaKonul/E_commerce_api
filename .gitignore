@@ -2,6 +2,7 @@
 .env.db
 src/logs
 __pycache__
+media
 
 
 
