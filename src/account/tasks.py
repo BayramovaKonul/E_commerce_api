@@ -98,7 +98,7 @@ def validate_new_user_email(email, token):
             <p>If you did not register for this account, please disregard this email.</p>
             <p>Best regards,<br>Your Company Team</p>
         </body>
-    </html>
+    </html>  """
         
         plain_message = f"Click the link below to validate your email:\n\n{validation_link}"
         

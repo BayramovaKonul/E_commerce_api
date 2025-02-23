@@ -191,8 +191,8 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")  # This will be the "from" email address
 
 # url for password reset
-RESET_PASSWORD_URL = os.environ.get("RESET_PASSWORD_URL", "http://localhost:8000/forgot-password")
-VALIDATE_USER_URL = os.environ.get("VALIDATE_USER_URL", "http://localhost:8000/validate-password")
+RESET_PASSWORD_URL = os.environ.get("RESET_PASSWORD_URL", "http://example.com/forgot-password")
+VALIDATE_USER_URL = os.environ.get("VALIDATE_USER_URL", "http://example.com/validate-user")
 
 # CELERY_BEAT_SCHEDULE = {
 #     'send-user-count-every-midnight': {

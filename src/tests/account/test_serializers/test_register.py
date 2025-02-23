@@ -2,13 +2,14 @@ import pytest
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from account.serializers import UserRegisterSerializer
-from ...confest import user
+from ...confest import user, validation_token
 from django.core import mail
 from account.models import ValidateUserTokenModel
 from account.serializers import UserValidationSerializer
 from datetime import timedelta
 from django.utils.timezone import now
 from rest_framework import serializers
+import uuid
 
 @pytest.mark.django_db
 class TestUserRegisterSerializer:
@@ -97,30 +98,24 @@ class TestUserRegisterSerializer:
 
 
     @pytest.mark.django_db
-    def test_user_validation_serializer_with_valid_token(self, user):
+    def test_user_validation_serializer_with_valid_token(self, user, validation_token):
         """Test the UserValidationSerializer with valid tokens"""
 
-        valid_token = ValidateUserTokenModel.objects.create(
-            token="a618452e-08d8-4ba8-a404-fc37e9580288",
-            is_used=False,
-            created_at=now(),
-            user_id = user.id
-        )
-
-        serializer = UserValidationSerializer(data={"token": valid_token.token})
+        serializer = UserValidationSerializer(data={"token": validation_token.token})
         assert serializer.is_valid()
-        assert serializer.validated_data["token"] == valid_token
+        assert serializer.validated_data["token"] == validation_token
+
 
     @pytest.mark.django_db
     def test_user_validation_serializer_with_expired_token(self, user):
         """Test the UserValidationSerializer with expired tokens"""
 
         expired_token = ValidateUserTokenModel.objects.create(
-            token="a618452e-08d8-4ba8-a404-fc37e9580288",
+            token=str(uuid.uuid4()),
             is_used=False,
-            created_at=now() - timedelta(days=2),  # Expired 2 days ago
-            expired_at=now() - timedelta(days=1),
-            user_id = user.id
+            created_at=now() - timedelta(days=2), 
+            expired_at=now() - timedelta(days=1), 
+            user=user
         )
 
         serializer = UserValidationSerializer(data={"token": expired_token.token})
