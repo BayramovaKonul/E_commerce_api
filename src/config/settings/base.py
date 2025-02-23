@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     #my apps
     "e_commerce",
     "account",
+    "store",
     # installed apps
     'rest_framework',
     # "debug_toolbar",
@@ -192,12 +193,6 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")  # This will be the "f
 
 # url for password reset
 RESET_PASSWORD_URL = os.environ.get("RESET_PASSWORD_URL", "http://localhost:8000/forgot-password")
-# CELERY_BEAT_SCHEDULE = {
-#     'send-user-count-every-midnight': {
-#         'task': 'account.task.send_user_count_to_admin',
-#         'schedule': crontab(minute=0, hour=12)  # Runs at 12:00 PM every day
-#     },
-# }
 
 # # use redis for caching proccesses in throttling
 # CACHES = {
@@ -214,3 +209,6 @@ RESET_PASSWORD_URL = os.environ.get("RESET_PASSWORD_URL", "http://localhost:8000
 #     }
 # }
 
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB

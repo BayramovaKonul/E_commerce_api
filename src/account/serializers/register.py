@@ -9,6 +9,10 @@ from django.contrib.auth.password_validation import validate_password
 
 User= get_user_model()
 
+class UserBaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUserModel
+        fields = ['email', 'first_name', 'last_name']
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     # use them when writing data to the database, but don't include in response
