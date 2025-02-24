@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from ...confest import anonymous_client, user
 from django.conf import settings
+from django.core import mail
 
 
 @pytest.mark.django_db
@@ -24,7 +25,7 @@ def test_register_view_with_valid_credentials(anonymous_client):
     res = anonymous_client.post(url, data=data,format='json')
 
     assert res.status_code == status.HTTP_201_CREATED
-    assert res.data["message"] == "You registered successfully"
+    assert res.data["message"] == "You registered successfully. Please check your email to validate."
 
 
 @pytest.mark.django_db
@@ -104,6 +105,36 @@ def test_register_view_with_invalid_email(anonymous_client):
     assert "email" in res.data
     assert res.data["email"] == ["Enter a valid email address."]
 
+@pytest.mark.django_db
+def test_welcoming_email_for_new_user(anonymous_client):
+    """Test getting welcoming email using for a new user"""
+
+    # Set the language to English for the test
+    from django.utils.translation import activate
+    activate('en') 
+
+    url = reverse("register")
+
+    data={
+        "email":'test_valid@gmail.com',
+        "first_name": 'test',
+        "last_name": 'check',
+        "password1": "1234",
+        "password2": "1234"
+    }
+
+    response = anonymous_client.post(url, data=data,format='json')
+        
+    assert response.status_code == status.HTTP_201_CREATED
+
+    # Assert that an email was sent
+    assert len(mail.outbox) == 2  # One for email validation and one for welcoming
+    email = mail.outbox[0]
+        
+    # Verify the email details (subject, recipient, and body)
+    assert mail.outbox[1].subject == "Happy To See you On board!" # second email in the box
+    assert email.to == [data['email']]
+
 
 # SINCE WE ARE IN DEVELOPMENT STAGE, I DISABLED PASSWORD VALIDATORS, BUT USUALLY IT IS FOR WEAK PASSWORDS
 
@@ -129,6 +160,8 @@ if settings.DEBUG == False:
         assert not res.status_code == 200
         assert "password1" in res.data 
         assert res.data["password1"] == ["Weak password"]
+
+
 
 
 

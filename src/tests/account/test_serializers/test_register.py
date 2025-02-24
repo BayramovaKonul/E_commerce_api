@@ -1,11 +1,15 @@
 import pytest
-from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from django.contrib.auth.hashers import check_password
 from account.serializers import UserRegisterSerializer
-from account.models import CustomUserModel
-from ...confest import user
-
+from ...confest import user, validation_token
+from django.core import mail
+from account.models import ValidateUserTokenModel
+from account.serializers import UserValidationSerializer
+from datetime import timedelta
+from django.utils.timezone import now
+from rest_framework import serializers
+import uuid
 
 @pytest.mark.django_db
 class TestUserRegisterSerializer:
@@ -67,5 +71,60 @@ class TestUserRegisterSerializer:
 
         assert "password2" in serializer.errors
         assert serializer.errors["password2"] == ["Passwords must match."]
+
+
+    def test_user_validation_email(self):
+        """Test receiving email validatin after registration"""
+
+        data = {
+            'first_name': 'Konul',
+            'last_name': 'Bayramova',
+            'email': 'konul@example.com',
+            'password1': 'Password123',
+            'password2': 'Password123'
+        }
+
+        serializer = UserRegisterSerializer(data=data)
+        assert serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Assert that an email was sent
+        assert len(mail.outbox) == 1  # For only email validation since it was sent first
+        email = mail.outbox[0]
+            
+        # Verify the email details (subject, recipient, and body)
+        assert mail.outbox[0].subject == "Email Validation" # first email in the box
+        assert email.to == [user.email]
+
+
+    @pytest.mark.django_db
+    def test_user_validation_serializer_with_valid_token(self, user, validation_token):
+        """Test the UserValidationSerializer with valid tokens"""
+
+        serializer = UserValidationSerializer(data={"token": validation_token.token})
+        assert serializer.is_valid()
+        assert serializer.validated_data["token"] == validation_token
+
+
+    @pytest.mark.django_db
+    def test_user_validation_serializer_with_expired_token(self, user):
+        """Test the UserValidationSerializer with expired tokens"""
+
+        expired_token = ValidateUserTokenModel.objects.create(
+            token=str(uuid.uuid4()),
+            is_used=False,
+            created_at=now() - timedelta(days=2), 
+            expired_at=now() - timedelta(days=1), 
+            user=user
+        )
+
+        serializer = UserValidationSerializer(data={"token": expired_token.token})
+        assert not serializer.is_valid()
+
+        assert "token" in serializer.errors
+        assert str(serializer.errors["token"][0]) == "{'Invalid or expired token.'}"
+
+
+
 
 

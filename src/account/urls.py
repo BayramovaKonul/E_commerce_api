@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import RegisterUserView, UpdateUserProfileView, PasswordResetView, RequestForgotPasswordView, ConfirmForgotPasswordView
+from .views import RegisterUserView, UpdateUserProfileView, PasswordResetView, RequestForgotPasswordView, ConfirmForgotPasswordView, ValidateEmailView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path("register/", RegisterUserView.as_view(), name="register"),
+    path("validate_email/", ValidateEmailView.as_view(), name="validate_email"),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('update-profile', UpdateUserProfileView.as_view(), name='update_profile'),

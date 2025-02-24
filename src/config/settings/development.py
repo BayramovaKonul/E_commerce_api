@@ -43,3 +43,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 #     'debug_toolbar.panels.redirects.RedirectsPanel',
 #     'debug_toolbar.panels.profiling.ProfilingPanel',
 # ]
+
+CELERY_TASK_ALWAYS_EAGER = True  # Forces tasks to run immediately during tests
+CELERY_TASK_EAGER_PROPAGATES = True  # Propagates exceptions from tasks
