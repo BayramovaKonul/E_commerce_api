@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "e_commerce",
     "account",
     "store",
+    "products",
     # installed apps
     'rest_framework',
     # "debug_toolbar",

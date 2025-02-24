@@ -4,8 +4,10 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.files.uploadedfile import SimpleUploadedFile
 from store.models import StoreModel
+from products.models import CategoryModel, ProductModel, ProductImageModel
 from io import BytesIO
 from PIL import Image
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 @pytest.fixture
 # a user that has not logged in yet
@@ -41,6 +43,17 @@ def authenticated_client(user):
 
 
 @pytest.fixture
+# a user that has already logged in
+def another_authenticated_client(another_user):
+    # get refresh token for the logged in user
+    refresh=RefreshToken.for_user(another_user)
+    client=APIClient()
+    # get access token using the refresh token
+    client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
+    return client
+
+
+@pytest.fixture
 def store(user):
     # Create a valid image using PIL
     image_file = BytesIO()
@@ -60,6 +73,7 @@ def store(user):
     )
     return store
 
+
 @pytest.fixture
 def store_data(user):
     """Sample store data for testing"""
@@ -78,3 +92,64 @@ def store_data(user):
         'picture': image,
         'owner': user
         }
+
+
+@pytest.fixture
+def category():
+    """Create a category for testing"""
+    category = CategoryModel.objects.create(name="Test Category")
+    return category
+
+
+@pytest.fixture
+def product(store, category):
+    """Create a product for testing"""
+    product = ProductModel.objects.create(
+        name="Test Product",
+        description="Product for testing images",
+        price=10.00,
+        stock=100,
+        store=store,
+    )
+    product.categories.add(category)
+    return product
+
+
+@pytest.fixture(scope="function")
+def image_file():
+    """Create a sample image file for testing"""
+    image = Image.new("RGB", (100, 100), color=(255, 0, 0))
+    img_io = BytesIO()
+    image.save(img_io, 'JPEG')
+    img_io.seek(0)
+    return InMemoryUploadedFile(img_io, None, 'test_image.jpg', 'image/jpeg', img_io.tell(), None)
+
+
+@pytest.fixture
+def product_data(store, category, image_file):
+    return {
+        "name": "Test Product",
+        "description": "Test Description",
+        "price": 100,
+        "stock": 10,
+        "store": store.id,
+        "categories": [category.id],
+        "images": [image_file]
+    }
+
+
+@pytest.fixture
+def product_data_2(store, category, image_file, product):
+    # Create a ProductImageModel instance and link it to the existing product
+    product_image = ProductImageModel.objects.create(product=product, image=image_file)
+    
+    return {
+        "name": "Test Product",
+        "description": "Test Description",
+        "price": 100,
+        "stock": 10,
+        "store": store.id,
+        "categories": [category.id],
+        "images": [product_image.id],  # Make sure to pass the image object or its ID
+    }
+
