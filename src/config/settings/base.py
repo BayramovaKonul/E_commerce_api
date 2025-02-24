@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     #my apps
     "e_commerce",
     "account",
+    "store",
     # installed apps
     'rest_framework',
     # "debug_toolbar",
@@ -191,6 +192,7 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")  # This will be the "from" email address
 
 # url for password reset
+
 RESET_PASSWORD_URL = os.environ.get("RESET_PASSWORD_URL", "http://example.com/forgot-password")
 VALIDATE_USER_URL = os.environ.get("VALIDATE_USER_URL", "http://example.com/validate-user")
 
@@ -200,6 +202,7 @@ VALIDATE_USER_URL = os.environ.get("VALIDATE_USER_URL", "http://example.com/vali
 #         'schedule': crontab(minute=0, hour=12)  # Runs at 12:00 PM every day
 #     },
 # }
+
 
 # # use redis for caching proccesses in throttling
 # CACHES = {
@@ -216,3 +219,6 @@ VALIDATE_USER_URL = os.environ.get("VALIDATE_USER_URL", "http://example.com/vali
 #     }
 # }
 
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
