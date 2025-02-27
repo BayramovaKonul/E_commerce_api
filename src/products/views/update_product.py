@@ -24,7 +24,7 @@ class UpdateProductView(APIView):
                                           instance=product, partial=True)
         
         if serializer.is_valid(raise_exception=True):
-            serializer.save(owner=request.user)
+            serializer.save()
             return Response(
                 {"message": "You updated your product details successfully", **serializer.data},
                 status=status.HTTP_200_OK

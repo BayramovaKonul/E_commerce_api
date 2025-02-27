@@ -1,8 +1,8 @@
 import pytest 
 from django.urls import reverse
 from rest_framework import status
-from ...confest import (authenticated_client, user, anonymous_client, store, 
-                        product_data_2, product, another_authenticated_client, category, another_user, image_file, product_data)
+from ...confest import (authenticated_client, user, anonymous_client, store,
+                         product, another_authenticated_client, category, another_user, product_data)
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -10,22 +10,22 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 @pytest.mark.django_db
 class TestUpdateProductView:
 
-    # def test_update_product_with_valid_data(self, authenticated_client, product_data_2, product):
-    #     """Test that user updates product with valid data """
-    #     from django.utils.translation import activate
-    #     activate('en')  # Ensures test runs in English without unwanted locale prefix
+    def test_update_product_with_valid_data(self, authenticated_client, product_data, product):
+        """Test that user updates product with valid data """
+        from django.utils.translation import activate
+        activate('en')  # Ensures test runs in English without unwanted locale prefix
 
-    #     url = reverse("update_product", args=[product.id])
+        url = reverse("update_product", args=[product.id])
 
 
-    #     res = authenticated_client.patch(url, data=product_data_2, format='multipart')
+        res = authenticated_client.patch(url, data=product_data, format='multipart')
 
-    #     print(res.data)
-    #     assert res.status_code == status.HTTP_200_OK
-    #     assert res.data["message"] == "You updated your product details successfully"
-    #     assert res.data["name"] == product_data_2["name"]
-    #     assert res.data["description"] == product_data_2["description"]
-    #     assert res.data["stock"] == product_data_2["stock"]
+        print(res.data)
+        assert res.status_code == status.HTTP_200_OK
+        assert res.data["message"] == "You updated your product details successfully"
+        assert res.data["name"] == product_data["name"]
+        assert res.data["description"] == product_data["description"]
+        assert res.data["stock"] == product_data["stock"]
 
 
     def test_update_product_with_invalid_name(self, authenticated_client, product):

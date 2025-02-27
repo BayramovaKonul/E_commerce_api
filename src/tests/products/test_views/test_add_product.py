@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
-from ...confest import authenticated_client, store, category, product_data, user, image_file, another_authenticated_client, another_user, anonymous_client
+from ...confest import authenticated_client, store, category, product_data, user, another_authenticated_client, another_user, anonymous_client
 
 import pytest
 from django.urls import reverse
@@ -11,7 +11,7 @@ from rest_framework.test import APIClient
 @pytest.mark.django_db
 class TestAddProductView:
 
-    def test_add_product_with_valid_data(self, authenticated_client, product_data, image_file):
+    def test_add_product_with_valid_data(self, authenticated_client, product_data):
         """Test product creation with valid data"""
 
         from django.utils.translation import activate

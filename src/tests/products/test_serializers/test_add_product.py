@@ -2,8 +2,9 @@ import pytest
 from rest_framework.exceptions import ValidationError
 from products.serializers import AddProductSerializer
 from products.models import ProductModel, ProductImageModel
+from store.models import StoreModel
 from django.core.files.uploadedfile import SimpleUploadedFile
-from ...confest import user, store, category, product, image_file, another_user
+from ...confest import user, store, category, product, another_user, product_data
 from rest_framework.test import APIRequestFactory
 from django.urls import reverse
 from rest_framework.request import Request
@@ -14,43 +15,29 @@ class TestAddProductSerializer:
 
     # THIS TEST DOESNT WORK
 
-    # def test_add_product_with_valid_data(self, store, user, category, image_file):
-    #     """Test adding a product with valid data"""
+    def test_add_product_with_valid_data(self, store, product_data):
+        """Test adding a product with valid data"""
 
-    #     factory = APIRequestFactory()
-    #     url = reverse('add_product')
+        factory = APIRequestFactory()
+        url = reverse('add_product')  
+        request = factory.post(url)  
+        store = StoreModel.objects.get(id=product_data['store'])  # Fetch store instance
+        request.user = store.owner  # Get the owner from the store
 
-    #     data = {
-    #         "name": "Test Product",
-    #         "description": "Test Description",
-    #         "price": 100,
-    #         "stock": 10,
-    #         "store": store.id,
-    #         "categories": [category.id],
-    #     }
+        serializer = AddProductSerializer(data=product_data, context={'request': request})
+        assert serializer.is_valid(), f"Errors: {serializer.errors}"
 
-    #     # Create WSGIRequest and wrap into DRF Request
-    #     wsgi_request = factory.post(url, data, format='multipart', FILES={'images': [image_file]})
-    #     wsgi_request.user = user
-    #     request = Request(wsgi_request)  # DRF Request (needed for context)
 
-    #     # Parse data using MultiPartParser
-    #     parser = MultiPartParser()
-    #     parsed_data = parser.parse(request)
+        product = serializer.save()
+   
 
-    #     # Pass the correct 'request' in context
-    #     serializer = AddProductSerializer(data=parsed_data.data, context={'request': request})
-    #     assert serializer.is_valid(), f"Errors: {serializer.errors}"
-
-    #     product = serializer.save()
-
-    #     assert product.name == data["name"]
-    #     assert product.description == data["description"]
-    #     assert product.price == data["price"]
-    #     assert product.stock == data["stock"]
-    #     assert product.store.id == data["store"]
-    #     assert list(product.categories.values_list('id', flat=True)) == data["categories"]
-    #     assert product.images.exists(), "Product images were not saved."
+        assert product.name == product_data["name"]
+        assert product.description == product_data["description"]
+        assert product.price == product_data["price"]
+        assert product.stock == product_data["stock"]
+        assert product.store.id == product_data["store"]
+        assert list(product.categories.values_list('id', flat=True)) == product_data["categories"]
+        assert product.images.exists(), "Product images were not saved."
 
 
 

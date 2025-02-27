@@ -126,30 +126,21 @@ def image_file():
 
 
 @pytest.fixture
-def product_data(store, category, image_file):
+def product_data(store, category):
+    image_file = BytesIO()
+    image = Image.new('RGB', (100, 100), color=(73, 109, 137))
+    image.save(image_file, format='JPEG')
+    image_file.seek(0)
+
+    image = SimpleUploadedFile("test_picture.jpg", image_file.read(), content_type="image/jpeg")
     return {
-        "name": "Test Product",
+        "name": "New Test Product",
         "description": "Test Description",
         "price": 100,
         "stock": 10,
         "store": store.id,
         "categories": [category.id],
-        "images": [image_file]
+        "images": [image]
     }
 
-
-@pytest.fixture
-def product_data_2(store, category, image_file, product):
-    # Create a ProductImageModel instance and link it to the existing product
-    product_image = ProductImageModel.objects.create(product=product, image=image_file)
-    
-    return {
-        "name": "Test Product",
-        "description": "Test Description",
-        "price": 100,
-        "stock": 10,
-        "store": store.id,
-        "categories": [category.id],
-        "images": [product_image.id],  # Make sure to pass the image object or its ID
-    }
 
