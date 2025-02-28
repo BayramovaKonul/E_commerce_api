@@ -35,7 +35,7 @@ class TestUpdateStoreView:
         res = authenticated_client.patch(url, data=invalid_data, format='multipart')
 
         assert res.status_code == status.HTTP_400_BAD_REQUEST
-        assert 'name' in res.data  # Assuming name is a required field
+        assert 'name' in res.data 
 
 
     def test_update_store_without_authentication(self, anonymous_client, store_data, store):
