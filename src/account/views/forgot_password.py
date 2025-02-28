@@ -36,7 +36,7 @@ class RequestForgotPasswordView(APIView):
 
             # Send password reset email 
             reset_link = f"{settings.RESET_PASSWORD_URL}?token={token.token}"
-            send_password_reset_email(email, reset_link)
+            send_password_reset_email.delay(email, reset_link)
 
             return Response({"message": "Password reset email sent.",
                              "token": str(token.token),
