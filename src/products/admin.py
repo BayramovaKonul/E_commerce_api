@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from django.contrib import admin
-from .models import ProductModel, CategoryModel, ProductImageModel
+from .models import ProductModel, CategoryModel, ProductImageModel, CommentModel
 
 @admin.register(ProductModel)
 class ProductAdmin(admin.ModelAdmin):
@@ -25,3 +25,10 @@ class ProductImageAdmin(admin.ModelAdmin):
     list_display_links = ['product__name'] 
     search_fields = ['product__name'] 
     list_filter = ['created_at']
+
+
+@admin.register(CommentModel)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['comment', 'product__name', 'user__email', 'rating']
+    list_display_links = ['comment', 'product__name', 'rating'] 
+    list_filter = ['product__name', 'user__email', 'created_at', 'rating']
