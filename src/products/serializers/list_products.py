@@ -12,7 +12,8 @@ class ProductPictureSerializer(serializers.ModelSerializer):
         
 class ListProductsSerializers(serializers.ModelSerializer):
     images = ProductPictureSerializer(many=True)
+    average_rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model=ProductModel
-        fields=['name', 'description', 'store', 'images', 'price', 'stock', 'categories']
+        fields=['name', 'description', 'store', 'images', 'price', 'stock', 'categories', 'average_rating']

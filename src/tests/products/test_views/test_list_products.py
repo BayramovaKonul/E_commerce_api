@@ -29,7 +29,7 @@ class TestProductListView:
     def test_filter_products_by_latest(self, anonymous_client, product, product2):
         """Test filtering products by latest"""
 
-        url = reverse("all_products")  + "?filter=latest"
+        url = reverse("all_products")  + "?order=latest"
         response = anonymous_client.get(url)
 
         assert response.status_code == 200
@@ -42,7 +42,7 @@ class TestProductListView:
     def test_filter_products_price_low_to_high(self, anonymous_client, product, product2):
         """Test filtering products from low to high price"""
 
-        url = reverse("all_products")  + "?filter=price_low_to_high"
+        url = reverse("all_products")  + "?order=price_low_to_high"
         response = anonymous_client.get(url)
 
         assert response.status_code == 200

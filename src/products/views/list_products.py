@@ -9,7 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg import openapi
 from ..models import ProductModel
 from ..serializers import ListProductsSerializers
-
+from django.db.models import Avg
 
 
 class ListProductsView(APIView):
@@ -73,8 +73,9 @@ class ListProductsView(APIView):
     def get(self, request):
         query_params = dict(request.query_params)
         search=query_params.get('search')
-
-        products=ProductModel.objects.all().prefetch_related('images').select_related('store')
+        products = ProductModel.objects.annotate(
+                        average_rating=Avg('comments__rating', default=0)  # Calculate average rating
+                        ).prefetch_related('images').select_related('store')
         
         # Search
         if search:
@@ -83,14 +84,14 @@ class ListProductsView(APIView):
                                        Q(store__name__icontains=search))
     
 
-        # Filter
-        filter_option = request.GET.get('filter', 'default')
+        # Order
+        order_option = request.GET.get('order', 'default')
 
-        if filter_option == 'latest':
+        if order_option == 'latest':
             products = products.order_by('-created_at')  
-        elif filter_option == 'price_low_to_high':
+        elif order_option == 'price_low_to_high':
             products = products.order_by('price')  
-        elif filter_option == 'price_high_to_low':
+        elif order_option == 'price_high_to_low':
             products = products.order_by('-price')
 
         # Pagination
