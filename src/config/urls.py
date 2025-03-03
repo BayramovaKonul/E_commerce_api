@@ -34,7 +34,8 @@ urlpatterns = i18n_patterns (
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('user/', include('account.urls')),
     path('store/', include('store.urls')),
-   path('products/', include('products.urls')),
+    path('products/', include('products.urls')),
+    path('shopping/', include('e_commerce.urls')),
 )
 
 if settings.DEBUG:
