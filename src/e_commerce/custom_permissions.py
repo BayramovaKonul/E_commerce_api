@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-class IsWishlistOwnerOrReadOnly(permissions.BasePermission):
+class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow users to edit or delete their own wishlist.
     """

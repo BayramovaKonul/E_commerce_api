@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from store.pagination import ItemsPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from django.db.models import Q
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -14,7 +14,7 @@ from django.db.models import Avg
 
 class ListProductsView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes=[IsAuthenticatedOrReadOnly]
+    permission_classes=[AllowAny]
 
     @swagger_auto_schema(
         manual_parameters=[

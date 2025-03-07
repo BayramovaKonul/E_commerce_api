@@ -4,12 +4,13 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.files.uploadedfile import SimpleUploadedFile
 from store.models import StoreModel
-from products.models import CategoryModel, ProductModel, ProductImageModel
+from products.models import CategoryModel, ProductModel, ProductImageModel, CommentModel
 from io import BytesIO
 from PIL import Image
 import uuid
 from account.models import ValidateUserTokenModel
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from e_commerce.models import CartModel, WishlistModel
 
 @pytest.fixture
 # a user that has not logged in yet
@@ -22,7 +23,8 @@ def user():
     return get_user_model().objects.create_user(email='test@gmail.com',
                                                 first_name = "konul",
                                                 last_name = "bayramova",
-                                                password='1234')
+                                                password='1234', 
+                                                is_active = True)
 
 
 @pytest.fixture
@@ -39,7 +41,8 @@ def another_user():
     return get_user_model().objects.create_user(email='test2@gmail.com',
                                                 first_name = "konul",
                                                 last_name = "bayramova",
-                                                password='1234')
+                                                password='1234',
+                                                is_active=True)
 
 
 @pytest.fixture
@@ -179,3 +182,30 @@ def product_data(store, category):
         "images": [image]
     }
 
+
+@pytest.fixture
+def cart_item(user, product):
+    return CartModel.objects.create(user=user, 
+                                    product=product, 
+                                    quantity=2)
+
+@pytest.fixture
+def cart_item2(user, product2):
+    return CartModel.objects.create(user=user, 
+                                    product=product2, 
+                                    quantity=1)
+
+
+@pytest.fixture
+def add_wishlist_items(user, product, product2):
+    """Add products to the wishlist."""
+    WishlistModel.objects.create(user=user, product=product)
+    WishlistModel.objects.create(user=user, product=product2)
+
+
+@pytest.fixture
+def add_comments(db, product, product2, user):
+    """Create comments with ratings for products."""
+    CommentModel.objects.create(user=user, product=product, rating=4)
+    CommentModel.objects.create(user=user, product=product, rating=5)
+    CommentModel.objects.create(user=user, product=product2, rating=3)
