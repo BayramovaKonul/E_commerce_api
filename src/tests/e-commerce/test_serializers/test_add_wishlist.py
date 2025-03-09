@@ -13,6 +13,7 @@ class TestAddWishlistSerializer:
         """Test that a product can be added to the wishlist"""
     
         factory = APIRequestFactory()
+
         url = reverse('list_add_wishlist')    
         request = factory.post(url)  
         request.user = user
@@ -33,6 +34,7 @@ class TestAddWishlistSerializer:
         WishlistModel.objects.create(user=user, product=product)
 
         factory = APIRequestFactory()
+
         url = reverse('list_add_wishlist')  
         request = factory.post(url)  
         request.user = user
