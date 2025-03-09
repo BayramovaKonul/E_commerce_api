@@ -12,3 +12,13 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Check if the user is the owner of the wishlist
         return obj.user == request.user
+
+
+
+class IsStaffUser(permissions.BasePermission):
+    """
+    Custom permission to allow only staff users to access the endpoint.
+    """
+
+    def has_permission(self, request, view):
+        return request.user and request.user.is_staff

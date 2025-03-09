@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import CustomUserModel, UserProfileModel, ForgotPasswordTokenModel, ValidateUserTokenModel
+from .models import CustomUserModel, UserProfileModel, ForgotPasswordTokenModel, ValidateUserTokenModel, AddressModel
 
 @admin.register(CustomUserModel)
 class CustomUserAdmin(UserAdmin):
@@ -51,3 +51,10 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user__email','birthday', 'phone_number']
     search_fields = ['user__email', 'birthday'] 
     list_filter = ['birthday']
+
+
+@admin.register(AddressModel)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ['address', 'country', 'user__email']
+    list_display_links = ['address', 'country'] 
+    list_filter = ['country', 'city', 'user__email']
