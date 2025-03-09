@@ -12,7 +12,6 @@ from django.db.models import Avg, Q
 from django.db.models import F, Sum
 from ..utility import calculate_cart_totals
 
-
 class MyCartView(APIView):
 
     @swagger_auto_schema(
@@ -74,7 +73,6 @@ class MyCartView(APIView):
             **cart_totals
         })
 
-
     @swagger_auto_schema(
         request_body=AddToCartSerializer,
         responses={
@@ -89,4 +87,3 @@ class MyCartView(APIView):
             serializer.save(user=request.user)
             return Response({"message": "You added a product to your cart"}, 
                             status=status.HTTP_201_CREATED)
-    
