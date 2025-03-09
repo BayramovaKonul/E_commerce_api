@@ -27,7 +27,7 @@ class CheckoutAPIView(APIView):
         cart_products=CartModel.objects.filter(user=request.user)
 
         if not cart_products:
-            return Response({"message": "Your cart is empty. Please add items to your cart before checking out."})
+            return Response({"message": "Your cart is empty. Please add items to your cart before checking out."}, status=status.HTTP_400_BAD_REQUEST)
     
 
         if not default_address:
@@ -44,7 +44,7 @@ class CheckoutAPIView(APIView):
                         AddressModel.objects.filter(user=request.user, is_default=True).exclude(pk=address.pk).update(is_default=False)
                         logger.info(f"Set address {address.id} as default for user {request.user.id}")
 
-                    # Proceed with order creation as usual
+                    # Proceed with order creation
                     order = self.create_order_and_process(request, address)
                     return Response({"message": "Thank you for your order. Please check your email for order details"}, status=status.HTTP_201_CREATED)
             else:
@@ -63,7 +63,7 @@ class CheckoutAPIView(APIView):
         order = OrderModel.objects.create(user=user, shipping_address=address)
         logger.info(f"Order created for user {user.id}, order ID: {order.id}")
 
-        # Fetch cart items and prepare order details
+        # Fetch cart items for order details
         cart_items = CartModel.objects.filter(user=user)
         order_details = []
         products_to_update = []
