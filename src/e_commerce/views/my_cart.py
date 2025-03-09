@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg import openapi
 from ..models import CartModel
-from ..serializers import MyCartSerializer
+from ..serializers import MyCartSerializer, AddToCartSerializer
 from django.db.models import Avg, Q
 from django.db.models import F, Sum
 from ..utility import calculate_cart_totals
@@ -74,4 +74,19 @@ class MyCartView(APIView):
             **cart_totals
         })
 
+
+    @swagger_auto_schema(
+        request_body=AddToCartSerializer,
+        responses={
+            201: AddToCartSerializer,
+            400: 'Bad request, invalid data.',
+        }
+    )
+
+    def post(self, request):
+        serializer = AddToCartSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user)
+            return Response({"message": "You added a product to your cart"}, 
+                            status=status.HTTP_201_CREATED)
     

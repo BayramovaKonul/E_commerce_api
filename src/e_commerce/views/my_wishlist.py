@@ -7,12 +7,12 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser, FormParser
 from drf_yasg import openapi
 from ..models import WishlistModel
-from ..serializers import MyWishlistSerializer
+from ..serializers import MyWishlistSerializer, AddWishlistSerializer
 from django.db.models import Avg
 
 
 class MyWishListView(APIView):
-
+    permission_classes=[IsAuthenticatedOrReadOnly]
     @swagger_auto_schema(
         operation_description="Get the user's wishlist with optional search",
         responses={
@@ -49,4 +49,25 @@ class MyWishListView(APIView):
 
         serializer = MyWishlistSerializer(my_wishlist, many=True)
         return Response(serializer.data)
+
+    
+
+    @swagger_auto_schema(
+        request_body=AddWishlistSerializer,
+        responses={
+            201: AddWishlistSerializer,
+            400: 'Bad request, invalid data.',
+        }
+    )
+    
+    def post(self, request):
+        print("post is called")
+        serializer = AddWishlistSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user)
+            return Response({"message": "You added a product to wishlist"}, 
+                            status=status.HTTP_201_CREATED)
+        
+
+    
     

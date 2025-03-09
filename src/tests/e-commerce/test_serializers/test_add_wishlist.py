@@ -13,11 +13,13 @@ class TestAddWishlistSerializer:
         """Test that a product can be added to the wishlist"""
     
         factory = APIRequestFactory()
-        url = reverse('add_wishlist', kwargs={'product_id': product.id})    
+        url = reverse('list_add_wishlist')    
         request = factory.post(url)  
         request.user = user
-        print(user)
-        serializer = AddWishlistSerializer(data={'product': product.id}, context={'request': request})
+        product_data={
+            'product':product.id
+        }
+        serializer = AddWishlistSerializer(data=product_data, context={'request': request})
 
         assert serializer.is_valid()
         serializer.save()
@@ -31,11 +33,13 @@ class TestAddWishlistSerializer:
         WishlistModel.objects.create(user=user, product=product)
 
         factory = APIRequestFactory()
-        url = reverse('add_wishlist', kwargs={'product_id': product.id})  
+        url = reverse('list_add_wishlist')  
         request = factory.post(url)  
         request.user = user
-
-        serializer = AddWishlistSerializer(data={'product': product.id}, context={'request': request})
+        product_data={
+            'product':product.id
+        }
+        serializer = AddWishlistSerializer(data=product_data, context={'request': request})
 
         with pytest.raises(ValidationError) as exc_info:
             serializer.is_valid(raise_exception=True)
