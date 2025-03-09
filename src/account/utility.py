@@ -10,7 +10,6 @@ def generate_token(user):
     return token
 
 
-
 def generate_validation_link(user, token):
 
     validation_url = reverse('validate_email')  

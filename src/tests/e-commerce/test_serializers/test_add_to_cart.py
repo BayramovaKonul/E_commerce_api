@@ -13,10 +13,13 @@ class TestAddToCartSerializer:
         """Test that a product can be added to the cart"""
     
         factory = APIRequestFactory()
-        url = reverse('add_to_cart', kwargs={'product_id': product.id})    
+        url = reverse('list_add_cart')    
         request = factory.post(url)  
         request.user = user
-        serializer = AddToCartSerializer(data={'product': product.id}, context={'request': request})
+        product_data={
+            'product':product.id
+        }
+        serializer = AddToCartSerializer(data=product_data, context={'request': request})
 
         assert serializer.is_valid()
         serializer.save()
@@ -30,11 +33,13 @@ class TestAddToCartSerializer:
         CartModel.objects.create(user=user, product=product)
 
         factory = APIRequestFactory()
-        url = reverse('add_to_cart', kwargs={'product_id': product.id})  
+        url = reverse('list_add_cart')  
         request = factory.post(url)  
         request.user = user
-
-        serializer = AddToCartSerializer(data={'product': product.id}, context={'request': request})
+        product_data={
+            'product':product.id
+        }
+        serializer = AddToCartSerializer(data=product_data, context={'request': request})
 
         with pytest.raises(ValidationError) as exc_info:
             serializer.is_valid(raise_exception=True)

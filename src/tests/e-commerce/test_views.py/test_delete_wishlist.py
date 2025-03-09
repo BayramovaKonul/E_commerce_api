@@ -12,8 +12,7 @@ class TestDeleteWishlistView:
 
         wishlist = WishlistModel.objects.create(user=user, product=product)
 
-        url = reverse('delete_wishlist', kwargs={'id': wishlist.id})
-        
+        url = reverse('delete_wishlist', kwargs={'wishlist_id': wishlist.id})
         response = authenticated_client.delete(url)
         
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -24,7 +23,8 @@ class TestDeleteWishlistView:
         """Test that a user who is not the owner cannot delete the wishlist"""
 
         wishlist = WishlistModel.objects.create(user=user, product=product)
-        url = reverse('delete_wishlist', kwargs={'id': wishlist.id})
+
+        url = reverse('delete_wishlist', kwargs={'wishlist_id': wishlist.id})
         
         response = another_authenticated_client.delete(url)
         
@@ -35,7 +35,7 @@ class TestDeleteWishlistView:
     def test_delete_product_from_wishlist_not_found(self, authenticated_client):
         """Test trying to delete a product from wishlist that doesn't exist"""
 
-        url = reverse('delete_wishlist', kwargs={'id': 99999})  
+        url = reverse('delete_wishlist', kwargs={'wishlist_id': 99999})  
         
         response = authenticated_client.delete(url)
         
