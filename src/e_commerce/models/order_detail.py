@@ -34,3 +34,18 @@ class OrderDetailsModel (models.Model):
     def __str__(self):
         return f"{self.product.name} -> {self.status} -> {self.cost}"
 
+
+    def save(self, *args, **kwargs):
+        """
+        If all items in an order have status 'delivered', update the order status to 'completed'.
+        """
+        super().save(*args, **kwargs)  # Save the current instance first
+
+        order = self.order  # Get the order associated with this item
+        if order.details.exclude(status=OrderDetailsModel.ProductStatus.DELIVERED).exists():
+            return  # If there's any item that is NOT delivered, exit
+
+        # If all items are delivered, update order status
+        order.status = OrderModel.OrderStatus.COMPLETED
+        order.save()
+
