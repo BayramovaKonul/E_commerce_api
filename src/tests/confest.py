@@ -41,14 +41,14 @@ def another_user():
                                                 first_name = "konul",
                                                 last_name = "bayramova",
                                                 password='1234',
-                                                is_active=True)
+                                                is_active = True)
 
 
 @pytest.fixture
 # a user that has already logged in
-def authenticated_client(user):
+def another_authenticated_client(another_user):
     # get refresh token for the logged in user
-    refresh=RefreshToken.for_user(user)
+    refresh=RefreshToken.for_user(another_user)
     client=APIClient()
     # get access token using the refresh token
     client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
@@ -57,9 +57,9 @@ def authenticated_client(user):
 
 @pytest.fixture
 # a user that has already logged in
-def another_authenticated_client(another_user):
+def authenticated_client(user):
     # get refresh token for the logged in user
-    refresh=RefreshToken.for_user(another_user)
+    refresh=RefreshToken.for_user(user)
     client=APIClient()
     # get access token using the refresh token
     client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
@@ -128,6 +128,20 @@ def product(store, category):
     return product
 
 
+@pytest.fixture
+def product2(store, category):
+    """Create a product 2 for testing"""
+    product = ProductModel.objects.create(
+        name="Test Product 2",
+        description="Product for testing listing",
+        price=15.00,
+        stock=80,
+        store=store,
+    )
+    product.categories.add(category)
+    return product
+
+
 @pytest.fixture(scope="function")
 def image_file():
     """Create a sample image file for testing"""
@@ -155,5 +169,4 @@ def product_data(store, category):
         "categories": [category.id],
         "images": [image]
     }
-
 
