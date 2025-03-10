@@ -12,3 +12,4 @@ class IsStoreOwnerOrReadOnly(permissions.BasePermission):
 
         # Check if the user is the owner of the store
         return obj.owner == request.user
+

@@ -4,14 +4,15 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from ..models import OrderDetailsModel
 from ..serializers import OrderDetailStatusSerializer
-from ..custom_permissions import IsStaffUser
+from ..custom_permissions import IsOrderItemStoreOwnerOrReadOnly
 
 class OrderItemStatusView(APIView):
-    permission_classes = [IsStaffUser]
+    permission_classes = [IsOrderItemStoreOwnerOrReadOnly]
     
     def get(self, request, order_detail_id):
         """Retrieve the current status of a specific product in an order."""
         order_detail = get_object_or_404(OrderDetailsModel, id=order_detail_id)
+        self.check_object_permissions(request, order_detail)
         serializer = OrderDetailStatusSerializer(order_detail)
         return Response(serializer.data)
 
@@ -19,6 +20,7 @@ class OrderItemStatusView(APIView):
     def patch(self, request, order_detail_id):
         """Update the status of a specific product in an order."""
         order_detail = get_object_or_404(OrderDetailsModel, id=order_detail_id)
+        self.check_object_permissions(request, order_detail)
         serializer = OrderDetailStatusSerializer(order_detail, data=request.data, partial=True)
 
         if serializer.is_valid():

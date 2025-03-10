@@ -26,24 +26,6 @@ def user():
                                                 password='1234', 
                                                 is_active = True)
 
-@pytest.fixture
-def staff():
-    return get_user_model().objects.create_superuser(email='staff@gmail.com',
-                                                first_name = "konul",
-                                                last_name = "bayramova",
-                                                password='1234', 
-                                                is_active = True)
-
-
-@pytest.fixture
-# a user that has already logged in
-def authenticated_staff(staff):
-    # get refresh token for the logged in user
-    refresh=RefreshToken.for_user(staff)
-    client=APIClient()
-    # get access token using the refresh token
-    client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
-    return client
 
 
 @pytest.fixture
