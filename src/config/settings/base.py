@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
+OPENAI_API_KEY=os.environ.get('OPENAI_API_KEY')
 
 ALLOWED_HOSTS=["127.0.0.1","localhost"]
 

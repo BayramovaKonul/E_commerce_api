@@ -5,6 +5,7 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from ..models import ProductModel
 from django.shortcuts import get_object_or_404
+from ..tasks import analyze_comment_and_rate
 
 class CommentProductView(APIView):
 
@@ -20,7 +21,9 @@ class CommentProductView(APIView):
         serializer= CommentRatingSerializer(data=request.data, context = {'request':request})
         
         if serializer.is_valid(raise_exception=True):
-            serializer.save(product=product, user=request.user)
+            review=serializer.save(product=product, user=request.user)
+            # Trigger the Celery task to analyze and rate the comment
+            analyze_comment_and_rate.delay(review.id)
             return Response(
                 {"message": "Thanks for your comment", **serializer.data},
                 status=status.HTTP_201_CREATED

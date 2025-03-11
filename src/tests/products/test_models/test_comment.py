@@ -24,17 +24,6 @@ class TestCommentModel:
         assert comment.product == product
   
 
-    def test_comment_missing_rating(self, user, product):
-        """Test that an exception is raised when a comment has no rating"""
-        with pytest.raises(IntegrityError):
-            CommentModel.objects.create(
-                comment="This comment is missing a rating.",
-                rating=None,  
-                user=user,
-                product=product
-            )
-
-
     def test_comment_invalid_rating(self, user, product):
         """Test that an exception is raised when rating is out of 1-5 interval"""
 

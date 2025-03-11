@@ -10,7 +10,7 @@ User = get_user_model()
 class CommentModel(CreationDateAbstractModel):
     comment = models.CharField(verbose_name=_("comment"))
     rating = models.IntegerField(verbose_name=_("rating"), 
-                                 validators=[MinValueValidator(1), MaxValueValidator(5)], null=False, blank=False)
+                                 validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, 
                              related_name="comments")
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE, 

@@ -21,6 +21,7 @@ django-celery-beat = "==2.7.0"
 django-redis = "==5.4.0"
 flower = "==2.0.1"
 pillow = "==11.0.0"
+openai = "==1.65.5"
 
 [dev-packages]
 flake8 = "==7.1.1"
