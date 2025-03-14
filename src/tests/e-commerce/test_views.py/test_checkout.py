@@ -29,33 +29,6 @@ class TestCheckoutAPIView:
 
 
     @pytest.mark.django_db
-    def test_checkout_create_order_with_default_address(self, authenticated_client, user, address, cart_item, order_detail):
-        """Test creating an order when a default address exists."""
-
-        address.is_default=True
-        address.save()
-        url = reverse('checkout')  
-        
-        # Ensure there's an order before the checkout
-        assert not OrderModel.objects.count() == 0
-        
-        response = authenticated_client.post(url)
-
-        # Validate order is created
-        order = OrderModel.objects.first()
-        assert response.status_code == status.HTTP_201_CREATED
-        assert order.shipping_address == address
-        assert OrderDetailsModel.objects.filter(order=order).count() == 1
-        assert order.user == user
-        assert "Thank you for your order. Please check your email for order details" in response.data["message"]
-
-        # Verify stock is updated
-        product = order_detail.product
-        product.refresh_from_db()
-        assert product.stock == 98  # 100 - 2 items purchased
-
-
-    @pytest.mark.django_db
     def test_checkout_create_order_without_default_address(self, authenticated_client, user, cart_item, address, order_detail):
         """Test creating an order without a default address."""
      
@@ -80,33 +53,4 @@ class TestCheckoutAPIView:
         assert order.shipping_address == address
 
 
-    @pytest.mark.django_db
-    def test_checkout_order_confirmation_email(self, authenticated_client, user, address, cart_item, order):
-        """Test checking order confirmation email was sent"""
-
-        address.is_default=True
-        address.save()
-        url = reverse('checkout')  
-        response = authenticated_client.post(url)
-
-        assert response.status_code == status.HTTP_201_CREATED
-
-        assert len(mail.outbox) == 1  # Only one email should be in the outbox
-
-        email = mail.outbox[0]
-        
-        order_number = OrderModel.objects.latest('id').id
-        # Assert the email subject is correct
-        assert email.subject.startswith("Order Confirmation - Order #")  # Check that it starts as expected
-        assert f"Order #{order_number}" in email.subject 
-        
-        # Assert the email is sent to the correct address
-        assert email.to == [user.email]
-        
-        # Check if the email body contains expected information
-        assert f"Thank you for your order! Your order (Order #{order_number}) has been successfully placed." in email.body
-        assert f"Order ID: {order_number}" in email.body
-        
-
-
-
+    

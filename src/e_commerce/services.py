@@ -22,21 +22,21 @@ class CheckoutService:
     def process_order(self):
         """Main method to process the entire order."""
         with transaction.atomic():
-            self.create_order()
-            self.create_order_details()
-            self.update_stock()
-            self.clear_cart()
-            self.send_confirmation_email()
+            self._create_order()
+            self._create_order_details()
+            self._update_stock()
+            self._clear_cart()
+            self._send_confirmation_email()
 
         return self.order
 
-    def create_order(self):
-        """Creates a new order for the user."""
+    def _create_order(self):
+        """Creates a new order for the user. (for internal use only since it is protected)"""
         self.order = OrderModel.objects.create(user=self.user, shipping_address=self.address)
         logger.info(f"Order created for user {self.user.id}, order ID: {self.order.id}")
 
 
-    def create_order_details(self):
+    def _create_order_details(self):
         """Creates order details for each cart item."""
         order_details = [
             OrderDetailsModel(
@@ -50,7 +50,7 @@ class CheckoutService:
         logger.info(f"{len(order_details)} order details created for order ID: {self.order.id}")
 
 
-    def update_stock(self):
+    def _update_stock(self):
         """Updates product stock based on purchased quantities."""
         products_to_update = []
         for item in self.cart_items:
@@ -61,13 +61,7 @@ class CheckoutService:
         logger.info(f"Product stock updated for {len(products_to_update)} products.")
 
 
-    def clear_cart(self):
-        """Clears the user's cart after successful order placement."""
-        self.cart_items.delete()
-        logger.info(f"Cart items cleared for user {self.user.id}")
-
-
-    def send_confirmation_email(self):
+    def _send_confirmation_email(self):
         """Sends an order confirmation email to the user."""
         serialized_order_details = [
             {
@@ -91,3 +85,9 @@ class CheckoutService:
         )
 
         logger.info(f"Order confirmation email sent to user {self.user.email} with Order ID {self.order.id}")
+
+
+    def _clear_cart(self):
+        """Clears the user's cart after successful order placement."""
+        self.cart_items.delete()
+        logger.info(f"Cart items cleared for user {self.user.id}")

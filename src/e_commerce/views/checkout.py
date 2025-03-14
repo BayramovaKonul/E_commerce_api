@@ -7,6 +7,7 @@ from account.models import AddressModel
 from e_commerce.serializers import CheckoutSerializer
 from e_commerce.services import CheckoutService
 import logging
+from rest_framework import serializers
 
 logger = logging.getLogger("base")
 
@@ -22,11 +23,6 @@ class CheckoutAPIView(APIView):
 
         # Determine the shipping address
         address = self.get_shipping_address(request)
-        if not address:  
-            return Response(
-                {"message": "No default address found. Please provide a valid shipping address."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
 
         # Process the order
         checkout_service = CheckoutService(user, cart_products, address)
@@ -38,24 +34,9 @@ class CheckoutAPIView(APIView):
         )
 
     def get_shipping_address(self, request):
-        """
-        Determines which shipping address to use (new or default).
-        """
-        user = request.user
-        default_address = AddressModel.objects.filter(user=user, is_default=True).first()
-        new_address_data = request.data
+        serializer = CheckoutSerializer(data=request.data, context={"request": request})
+        
+        if serializer.is_valid():
+            return serializer.save()
 
-        if new_address_data:
-            serializer = CheckoutSerializer(data=new_address_data, context={"request": request})
-            if serializer.is_valid():
-                with transaction.atomic():
-                    address = serializer.save(user=user)
-                    if serializer.validated_data.get('is_default'):
-                        AddressModel.objects.filter(user=user, is_default=True).exclude(pk=address.pk).update(is_default=False)
-                    return address
-            return None
-
-        if default_address:
-            return default_address
-
-        return None
+        raise serializers.ValidationError(serializer.errors)
