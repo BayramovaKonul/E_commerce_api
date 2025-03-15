@@ -8,9 +8,9 @@ from products.models import CategoryModel, ProductModel, ProductImageModel, Comm
 from io import BytesIO
 from PIL import Image
 import uuid
-from account.models import ValidateUserTokenModel
+from account.models import ValidateUserTokenModel, AddressModel
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from e_commerce.models import CartModel, WishlistModel
+from e_commerce.models import CartModel, WishlistModel, OrderModel, OrderDetailsModel
 
 @pytest.fixture
 # a user that has not logged in yet
@@ -25,6 +25,7 @@ def user():
                                                 last_name = "bayramova",
                                                 password='1234', 
                                                 is_active = True)
+
 
 
 @pytest.fixture
@@ -209,3 +210,28 @@ def add_comments(db, product, product2, user):
     CommentModel.objects.create(user=user, product=product, rating=4)
     CommentModel.objects.create(user=user, product=product, rating=5)
     CommentModel.objects.create(user=user, product=product2, rating=3)
+
+
+@pytest.fixture
+def address(user):
+    return AddressModel.objects.create(user=user, 
+                                       address='Test address',
+                                       country='Test country',
+                                       city='Test city',
+                                       zip_code='Test zip code'
+                                    )
+
+
+@pytest.fixture
+def order(user, address):
+    return OrderModel.objects.create(user=user, 
+                                    shipping_address=address
+                                    )
+
+@pytest.fixture
+def order_detail(order, product):
+    return OrderDetailsModel.objects.create(order=order, 
+                                    product=product, 
+                                    quantity=1, 
+                                    cost=5.99,
+                                    )
