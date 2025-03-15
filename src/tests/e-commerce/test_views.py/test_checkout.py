@@ -25,7 +25,7 @@ class TestCheckoutAPIView:
         
         # Assert the status code and the expected error message
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "Your cart is empty. Please add items to your cart before checking out." in response.data["message"]
+        assert "Your cart is empty. Please add items before checking out." in response.data["message"]
 
 
     @pytest.mark.django_db
