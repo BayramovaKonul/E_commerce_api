@@ -15,43 +15,55 @@ from ..utility import calculate_cart_totals
 class MyCartView(APIView):
 
     @swagger_auto_schema(
-        operation_description="Get the user's shopping cart with optional search",
-        responses={
-            200: openapi.Response(
-                description="Cart details with totals",
-                schema=openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'cart': openapi.Schema(
-                            type=openapi.TYPE_ARRAY,
-                            items=MyCartSerializer(),
-                            description="List of cart items"
+    operation_description="Get the user's shopping cart with optional search",
+    responses={
+        200: openapi.Response(
+            description="Cart details with totals",
+            schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'cart': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={  
+                                'product': openapi.Schema(type=openapi.TYPE_OBJECT, properties={
+                                    'name': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'price': openapi.Schema(type=openapi.TYPE_NUMBER),
+                                }),
+                                'average_rating': openapi.Schema(type=openapi.TYPE_NUMBER),
+                                'quantity': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                'item_total': openapi.Schema(type=openapi.TYPE_NUMBER),
+                            },
                         ),
-                        'total': openapi.Schema(
-                            type=openapi.TYPE_NUMBER,
-                            format=openapi.FORMAT_DECIMAL,
-                            description="Total cost of items in the cart"
-                        ),
-                        'tax': openapi.Schema(
-                            type=openapi.TYPE_NUMBER,
-                            format=openapi.FORMAT_DECIMAL,
-                            description="Calculated tax for the cart"
-                        ),
-                        'shipping': openapi.Schema(
-                            type=openapi.TYPE_NUMBER,
-                            format=openapi.FORMAT_DECIMAL,
-                            description="Shipping cost"
-                        ),
-                    }
-                )
+                        description="List of cart items"
+                    ),
+                    'total': openapi.Schema(
+                        type=openapi.TYPE_NUMBER,
+                        format=openapi.FORMAT_DECIMAL,
+                        description="Total cost of items in the cart"
+                    ),
+                    'tax': openapi.Schema(
+                        type=openapi.TYPE_NUMBER,
+                        format=openapi.FORMAT_DECIMAL,
+                        description="Calculated tax for the cart"
+                    ),
+                    'shipping': openapi.Schema(
+                        type=openapi.TYPE_NUMBER,
+                        format=openapi.FORMAT_DECIMAL,
+                        description="Shipping cost"
+                    ),
+                }
             )
-        },
-        manual_parameters=[
-            openapi.Parameter(
-                'search', openapi.IN_QUERY, description="Search term for product or store name", type=openapi.TYPE_STRING
-            )
-        ]
-    )
+        )
+    },
+    manual_parameters=[
+        openapi.Parameter(
+            'search', openapi.IN_QUERY, description="Search term for product or store name", type=openapi.TYPE_STRING
+        )
+    ]
+)
+
     def get(self, request):
         query_params = dict(request.query_params)
         search = query_params.get('search', [''])[0] 

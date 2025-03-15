@@ -14,24 +14,33 @@ from django.db.models import Avg
 class MyWishListView(APIView):
     permission_classes=[IsAuthenticatedOrReadOnly]
     @swagger_auto_schema(
-        operation_description="Get the user's wishlist with optional search",
-        responses={
-            200: openapi.Response(
-                description="List of products in the wishlist with average ratings",
-                schema=openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=MyWishlistSerializer(),
-                    description="List of wishlist items with product details"
+    operation_description="Get the user's wishlist with optional search",
+    responses={
+        200: openapi.Response(
+            description="List of products in the wishlist with average ratings",
+            schema=openapi.Schema(
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        # Define the properties of your wishlist items here.
+                        # For example:
+                        'product_name': openapi.Schema(type=openapi.TYPE_STRING),
+                        'product_id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                        'average_rating': openapi.Schema(type=openapi.TYPE_NUMBER),
+                    },
+                    description="Wishlist item with product details"
                 )
             )
-        },
-        manual_parameters=[
-            openapi.Parameter(
-                'search', openapi.IN_QUERY, description="Search term for product or store name", type=openapi.TYPE_STRING
-            )
-        ]
-    )
-    
+        )
+    },
+    manual_parameters=[
+        openapi.Parameter(
+            'search', openapi.IN_QUERY, description="Search term for product or store name", type=openapi.TYPE_STRING
+        )
+    ]
+)
+
     def get(self, request):
         query_params = dict(request.query_params)
         search = query_params.get('search', [''])[0] 

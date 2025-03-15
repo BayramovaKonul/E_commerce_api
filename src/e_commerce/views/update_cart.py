@@ -30,27 +30,38 @@ class DetailCartAPIView(APIView):
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'cart': openapi.Schema(
-                            type=openapi.TYPE_ARRAY,
-                            items=MyCartSerializer(),
-                            description="Updated list of cart items"
+                    'cart': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={ 
+                                'product': openapi.Schema(type=openapi.TYPE_OBJECT, properties={
+                                    'name': openapi.Schema(type=openapi.TYPE_STRING),
+                                    'price': openapi.Schema(type=openapi.TYPE_NUMBER),
+                                }),
+                                'average_rating': openapi.Schema(type=openapi.TYPE_NUMBER),
+                                'quantity': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                'item_total': openapi.Schema(type=openapi.TYPE_NUMBER),
+                            },
                         ),
-                        'total': openapi.Schema(
-                            type=openapi.TYPE_NUMBER,
-                            format=openapi.FORMAT_DECIMAL,
-                            description="Total cost of items in the cart"
-                        ),
-                        'tax': openapi.Schema(
-                            type=openapi.TYPE_NUMBER,
-                            format=openapi.FORMAT_DECIMAL,
-                            description="Calculated tax for the cart"
-                        ),
-                        'shipping': openapi.Schema(
-                            type=openapi.TYPE_NUMBER,
-                            format=openapi.FORMAT_DECIMAL,
-                            description="Shipping cost"
-                        ),
-                    }
+                        description="List of cart items"
+                    ),
+                    'total': openapi.Schema(
+                        type=openapi.TYPE_NUMBER,
+                        format=openapi.FORMAT_DECIMAL,
+                        description="Total cost of items in the cart"
+                    ),
+                    'tax': openapi.Schema(
+                        type=openapi.TYPE_NUMBER,
+                        format=openapi.FORMAT_DECIMAL,
+                        description="Calculated tax for the cart"
+                    ),
+                    'shipping': openapi.Schema(
+                        type=openapi.TYPE_NUMBER,
+                        format=openapi.FORMAT_DECIMAL,
+                        description="Shipping cost"
+                    ),
+                }
                 )
             ),
             400: openapi.Response(
