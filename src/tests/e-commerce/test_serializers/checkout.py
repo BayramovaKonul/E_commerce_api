@@ -9,7 +9,7 @@ from tests.confest import user, address
 @pytest.mark.django_db
 class TestCheckoutSerializer:
 
-    def test_to_internal_value_with_default_address(self, address, user):
+    def test_checkout_with_default_address(self, address, user):
         """Test using a default address."""
         address['is_default']=True
         address.save()
@@ -33,7 +33,7 @@ class TestCheckoutSerializer:
         assert serializer.validated_data["zip_code"] == address.zip_code
     
 
-    def test_to_internal_value_with_no_default_address(self, address, user):
+    def test_checkout_with_no_default_address(self, address, user):
         """Test that an exception is raised when no default address is available."""
 
         address_data={
