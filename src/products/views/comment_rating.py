@@ -6,6 +6,8 @@ from drf_yasg.utils import swagger_auto_schema
 from ..models import ProductModel
 from django.shortcuts import get_object_or_404
 from ..tasks import analyze_comment_and_rate
+from e_commerce.models import OrderDetailsModel
+from django.core.exceptions import ValidationError
 
 class CommentProductView(APIView):
 
@@ -21,10 +23,16 @@ class CommentProductView(APIView):
         serializer= CommentRatingSerializer(data=request.data, context = {'request':request})
         
         if serializer.is_valid(raise_exception=True):
-            review=serializer.save(product=product, user=request.user)
-            # Trigger the Celery task to analyze and rate the comment
-            analyze_comment_and_rate.delay(review.id)
-            return Response(
-                {"message": "Thanks for your comment", **serializer.data},
-                status=status.HTTP_201_CREATED
+            if OrderDetailsModel.objects.filter(order__user=request.user, product=product).exists():
+                review=serializer.save(product=product, user=request.user)
+                # Trigger the Celery task to analyze and rate the comment
+                analyze_comment_and_rate.delay(review.id)
+                return Response(
+                    {"message": "Thanks for your comment", **serializer.data},
+                    status=status.HTTP_201_CREATED
+                )
+            else:
+                return Response(
+                {"warning": "Please purchase the product first before reviewing."},
+                status=status.HTTP_400_BAD_REQUEST
             )

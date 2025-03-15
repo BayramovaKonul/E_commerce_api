@@ -13,7 +13,7 @@ class ProductModel (CreationDateAbstractModel):
     price = models.DecimalField(verbose_name=_("price"), decimal_places=2, max_digits=10, 
                                 validators=[MinValueValidator(0.01)])
     stock = models.PositiveIntegerField(verbose_name=_("stock"))
-    store = models.ForeignKey(StoreModel, on_delete=models.CASCADE,
+    store = models.ForeignKey(StoreModel, on_delete=models.SET_NULL, null=True,
                                related_name="products", verbose_name=_("products"))
     categories = models.ManyToManyField(CategoryModel,
                                         related_name="products", verbose_name=_("products"))
