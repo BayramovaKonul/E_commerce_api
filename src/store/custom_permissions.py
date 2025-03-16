@@ -13,3 +13,13 @@ class IsStoreOwnerOrReadOnly(permissions.BasePermission):
         # Check if the user is the owner of the store
         return obj.owner == request.user
 
+
+class IsStoreOwnerorNoAccessDashboard(permissions.BasePermission):
+    """
+    Custom permission to only allow store owners to access the store dashboard.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Deny all access if the user is not the store owner
+        return obj.owner == request.user
+

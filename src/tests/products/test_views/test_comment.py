@@ -2,7 +2,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 from django.urls import reverse
-from ...confest import authenticated_client, product, store, category, user
+from ...confest import authenticated_client, product, store, category, user, order, order_detail, address
 from products.models import CommentModel
 from unittest.mock import patch
 from products.tasks import analyze_comment_and_rate
@@ -10,12 +10,16 @@ from products.tasks import analyze_comment_and_rate
 @pytest.mark.django_db
 class TestCommentProductView:
 
-    def test_post_comment_with_valid_data(self, authenticated_client, product, user):
+    def test_post_comment_with_valid_data(self, authenticated_client, product, user, order, order_detail):
         """Test successful comment posting"""
 
         valid_comment_data = {
             'comment': 'Great product!',
         }
+
+        assert order.user == user
+        assert order_detail.product == product
+        assert order_detail.order == order
 
         url = reverse('rate_product', args=[product.id]) 
         response = authenticated_client.post(url, data=valid_comment_data, format='json')
@@ -43,12 +47,16 @@ class TestCommentProductView:
 
 
     @patch("products.views.comment_rating.analyze_comment_and_rate.delay")  # Mock Celery task
-    def test_post_comment(self, mock_celery_task, authenticated_client, product):
+    def test_post_comment(self, mock_celery_task, authenticated_client, product, order, order_detail, user):
 
         data = {"comment": "Great product!"}
 
         url = reverse('rate_product', args=[product.id])
         response = authenticated_client.post(url, data=data, format='json')
+
+        assert order.user == user
+        assert order_detail.product == product
+        assert order_detail.order == order
 
         assert response.status_code == 201
         assert CommentModel.objects.count() == 1  
