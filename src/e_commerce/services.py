@@ -63,16 +63,22 @@ class CheckoutService:
 
     def _send_confirmation_email(self):
         """Sends an order confirmation email to the user."""
+        order_details = self.order.details.all()
         serialized_order_details = [
             {
                 'product_name': item.product.name,
                 'quantity': item.quantity,
                 'cost': item.cost,
                 'product_id': item.product.id,
-            } for item in self.order.details.all()
+            } for item in order_details
         ]
         
-        cart_data = [{"item_total": item.product.price * item.quantity} for item in self.cart_items]
+        # Calculate item_total using order details (cost × quantity)
+        cart_data = [
+            {"item_total": detail.cost * detail.quantity}
+            for detail in order_details
+        ]
+        
         totals = calculate_cart_totals(cart_data)
 
         send_order_confirmation_email.delay(
