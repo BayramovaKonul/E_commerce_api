@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import CreateStoreView, UpdateStoreView, ListStoresView, StoreDashboardView, DeleteStoreView
+from .views import CreateStoreView, UpdateStoreView, ListStoresView, StoreDashboardView, DeleteStoreView, StoreOrderHistoryView
 
 urlpatterns = [
     path("create", CreateStoreView.as_view(), name="create_store"),
@@ -8,4 +8,5 @@ urlpatterns = [
     path("", ListStoresView.as_view(), name="all_stores"),
     path("dashboard/<int:store_id>/", StoreDashboardView.as_view(), name="store_dashboard"),
     path("delete/<int:store_id>/", DeleteStoreView.as_view(), name="delete_store"),
+    path("order-history/<int:store_id>/", StoreOrderHistoryView.as_view(), name="order_history"),
 ]

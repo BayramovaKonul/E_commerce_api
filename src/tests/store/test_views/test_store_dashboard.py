@@ -15,8 +15,7 @@ class TestStoreDashboardView:
 
         response = another_authenticated_client.get(url)
         
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert response.data['error'] == "You are not allowed to view the store dashboard. You are not the owner."
+        assert response.status_code == status.HTTP_403_FORBIDDEN, f"Expected 403, got {response.status_code}"
 
 
     def test_store_not_found(self, store, authenticated_client):
@@ -43,7 +42,6 @@ class TestStoreDashboardView:
         assert 'total_comments' in response.data
         assert 'total_sold_products' in response.data
         assert 'store_rating' in response.data
-        assert 'order_data' in response.data
         
 
         assert response.data['total_products'] == 2 
@@ -52,4 +50,7 @@ class TestStoreDashboardView:
         assert response.data['total_comments'] == 3 
         assert response.data['total_sold_products'] == 1
         assert float(response.data['store_rating']) == 4.0  
+
+
+        
 

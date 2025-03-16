@@ -9,8 +9,11 @@ from ..serializers import StoreDashboardSerializer
 from django.db.models import Sum, F
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from ..custom_permissions import IsStoreOwnerorNoAccessDashboard
 
 class StoreDashboardView(APIView):
+    permission_classes = [IsStoreOwnerorNoAccessDashboard]
+    
     @swagger_auto_schema(
         operation_description="Retrieve store dashboard statistics including total products, customers, profit, comments, sold products, store rating, and order details.",
         manual_parameters=[
@@ -35,10 +38,10 @@ class StoreDashboardView(APIView):
         if not store:
             return Response({"error": "Store not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        if store.owner != user:
-            return Response({"error": "You are not allowed to view the store dashboard. You are not the owner."}, status=status.HTTP_400_BAD_REQUEST)
+        # Check user's permission 
+        self.check_object_permissions(request, store)
 
-        # Total product count in the store
+         # Total product count in the store
         total_products = store.products.count()
 
         # Total number of customers who placed orders in the store
@@ -56,35 +59,6 @@ class StoreDashboardView(APIView):
         # Calculate the average rating of products for this store
         store_rating = CommentModel.objects.filter(product__store=store).aggregate(Avg('rating'))['rating__avg'] or 0
 
-        # All orders made from this store
-        all_orders = OrderModel.objects.filter(details__product__store=store)
-
-        order_data = []
-        for order in all_orders:
-            # The order details to include only products from this store
-            order_details = order.details.filter(product__store=store)
-
-            if not order_details:
-                # Skip orders that don't contain products from this store
-                continue
-
-            order_details_dict = {
-                "order_id": order.id,
-                "order_date": order.created_at,  
-                "customer_email": order.user.email, 
-                "order_status": order.status, 
-                "shipping_address": order.shipping_address,
-                "products": [
-                    {
-                        "name": item.product.name,
-                        "quantity": item.quantity,
-                        "cost": item.cost,
-                        "total_cost": item.quantity * item.cost
-                    } for item in order_details
-                ]
-            }
-            order_data.append(order_details_dict)
-
         data = {
             'total_products': total_products,
             'total_customers': total_customers,
@@ -92,7 +66,6 @@ class StoreDashboardView(APIView):
             'total_comments': total_comments,
             'total_sold_products': total_sold_products,
             'store_rating': round(store_rating, 1),
-            'order_data': order_data
         }
 
         serializer = StoreDashboardSerializer(data)
