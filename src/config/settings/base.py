@@ -28,19 +28,18 @@ INSTALLED_APPS = [
     "products",
     # installed apps
     'rest_framework',
-    # "debug_toolbar",
     'rest_framework_simplejwt',
-    # 'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'django_celery_beat',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -96,6 +95,11 @@ MEDIA_URL = "/media/"
 # Path where media is stored'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
+STATIC_URL = "/static/"
+# the URL prefix for serving static files during development.
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# where static files should be collected when you run the collectstatic command. This is typically used in production.
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -136,7 +140,7 @@ LOGGING = {
         },
         "file": {
             "class": "logging.FileHandler",
-            "filename": "logs/general_logs.log",
+            "filename": os.environ.get("LOG_FILE_PATH", "/var/log/django_app.log"),
             "formatter": "json",
             # "filters": ["request_id"]
         },
@@ -198,29 +202,24 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL")  # This will be the "f
 RESET_PASSWORD_URL = os.environ.get("RESET_PASSWORD_URL", "http://example.com/forgot-password")
 VALIDATE_USER_URL = os.environ.get("VALIDATE_USER_URL", "http://example.com/validate-user")
 
-# CELERY_BEAT_SCHEDULE = {
-#     'send-user-count-every-midnight': {
-#         'task': 'account.task.send_user_count_to_admin',
-#         'schedule': crontab(minute=0, hour=12)  # Runs at 12:00 PM every day
-#     },
-# }
 
-
-# # use redis for caching proccesses in throttling
-# CACHES = {
-    # 'default': {
-    #     'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
-    # },
-#     "alternate": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://redis:6379",
-#         "OPTIONS": {
-#             "DB": 1,
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#         }
-#     }
-# }
+# use redis for caching proccesses in throttling
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+    },
+    "alternate": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379",
+        "OPTIONS": {
+            "DB": 1,
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
 
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
+
+CORS_ALLOWED_ORIGINS=["https://test.com", "https://test.api.com"]

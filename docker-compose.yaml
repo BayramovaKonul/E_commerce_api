@@ -1,30 +1,41 @@
 services:
+  nginx:
+    build: ./proxy
+    ports:
+      - 80:80
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - media_volume:/home/app/web/mediafiles
+      # - /etc/nginx/your_domain.crt:/etc/nginx/ssl/your_domain.crt
+      # - /etc/nginx/your_domain.key:/etc/nginx/ssl/your_domain.key
+    depends_on:
+      - app
   app:
     build:
       context: .
     #find dockerfile to take image as a base
     volumes:
-      - ./src:/app
+      - ./src:/app/src
+      - static_volume:/app/src/staticfiles
+      - media_volume:/app/src/media
+      - log_volume:/var/log
     # mount src folder to the volume in app to take changes
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
     env_file:
       - .env
     depends_on:
       - db
-    command: sh -c "python manage.py runserver 0.0.0.0:8000 --settings=config.settings.development"
-
-  
+    # command: sh -c "python manage.py runserver 0.0.0.0:8000 --settings=config.settings.development"
+    command: sh -c "DJANGO_SETTINGS_MODULE=config.settings.production gunicorn config.wsgi:application --bind 0.0.0.0:8000"
   db:
     image: postgres:17.2-alpine3.21
     ports:
       - "5555:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data/
+      - db_data4:/var/lib/postgresql/data/
     env_file:
       - .env.db
-
-  
   redis:
     image: redis:7.4.2-alpine
     container_name: redis
@@ -34,34 +45,47 @@ services:
   celery:
     build:
       context: .
+    #find dockerfile to take image as a base
     volumes:
-      - ./src:/app
+      - ./src:/app/src
+      - static_volume:/app/src/staticfiles
+      - media_volume:/app/src/media
+    # mount src folder to the volume in app to take changes
     env_file:
       - .env
     depends_on:
       - app
       - redis
-    command: sh -c "celery -A config worker --loglevel=INFO"
-
-  flower:  # celery interface to track tasks
+    command: sh -c "celery -A config worker --loglevel=info"
+  
+  flower:
     build:
       context: .
+    #find dockerfile to take image as a base
     volumes:
-      - ./src:/app
+      - ./src:/app/src
+      - static_volume:/app/src/staticfiles
+      - media_volume:/app/src/media
+    # mount src folder to the volume in app to take changes
     env_file:
       - .env
     depends_on:
       - app
       - redis
-    command: sh -c "celery -A config flower"
     ports:
       - "5557:5555"
 
-  celery-beat:
+    command: sh -c "celery -A config flower"
+  
+  celery_beat:
     build:
       context: .
+    #find dockerfile to take image as a base
     volumes:
-      - ./src:/app
+      - ./src:/app/src
+      - static_volume:/app/src/staticfiles
+      - media_volume:/app/src/media
+    # mount src folder to the volume in app to take changes
     env_file:
       - .env
     depends_on:
@@ -69,6 +93,10 @@ services:
       - redis
     command: sh -c "celery -A config beat"
 
+
 volumes:
-  db_data:
+  db_data4:
   # volume in the host
+  static_volume:
+  media_volume:
+  log_volume:
