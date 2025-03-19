@@ -7,12 +7,9 @@ services:
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
-      # - /etc/letsencrypt:/etc/letsencrypt:ro  
-      # - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf  
-      - ./nginx/ssl/epicbazaar.store.crt:/etc/nginx/ssl/epicbazaar.store.crt:ro
-      - ./nginx/ssl/epicbazaar.store.key:/etc/nginx/ssl/epicbazaar.store.key:ro
-      - ./nginx/nginx.prod.conf:/etc/nginx/conf.d/default.conf:ro
-
+      - /etc/letsencrypt:/etc/letsencrypt:ro  
+      - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf  
+ 
     depends_on:
       - app
   app:
