@@ -8,7 +8,7 @@ services:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
       - /etc/letsencrypt:/etc/letsencrypt:ro  
-      - ./nginx.prod.conf:/etc/nginx/nginx.conf   
+      - ./nginx.prod.conf:/etc/nginx/conf.d/default.conf  
       # - /etc/nginx/your_domain.crt:/etc/nginx/ssl/your_domain.crt
       # - /etc/nginx/your_domain.key:/etc/nginx/ssl/your_domain.key
     depends_on:
