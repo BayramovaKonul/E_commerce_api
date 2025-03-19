@@ -1,6 +1,6 @@
 from .base import * 
 
-DEBUG = False
+DEBUG = True
 
 AUTH_PASSWORD_VALIDATORS = [
     {
