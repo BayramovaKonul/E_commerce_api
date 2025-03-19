@@ -223,3 +223,4 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
 
 CORS_ALLOWED_ORIGINS=["https://test.com", "https://test.api.com"]
+
