@@ -6,6 +6,8 @@ services:
     volumes:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
+      - /etc/letsencrypt:/etc/letsencrypt:ro" # Mount certs read-only
+      - ./nginx.prod.conf:/etc/nginx/conf.d/nginx.prod.conf"      
       # - /etc/nginx/your_domain.crt:/etc/nginx/ssl/your_domain.crt
       # - /etc/nginx/your_domain.key:/etc/nginx/ssl/your_domain.key
     depends_on:
