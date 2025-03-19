@@ -224,3 +224,8 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
 
 CORS_ALLOWED_ORIGINS=["https://epicbazaar.store", "https://www.epicbazaar.store"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://epicbazaar.store",
+    "https://www.epicbazaar.store"
+]
+
