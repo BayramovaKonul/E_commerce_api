@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 class CreateStoreSerializer(serializers.ModelSerializer):
 
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    picture = serializers.ImageField()
 
     class Meta:
         model=StoreModel
