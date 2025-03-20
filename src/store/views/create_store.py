@@ -5,8 +5,10 @@ from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class CreateStoreView(APIView):
+    parser_classes = (MultiPartParser, FormParser)  # Required for file uploads
 
     @swagger_auto_schema(
         request_body=CreateStoreSerializer,
