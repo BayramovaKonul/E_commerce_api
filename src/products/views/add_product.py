@@ -10,20 +10,16 @@ from drf_yasg import openapi
 class AddProductView(APIView):
     parser_classes = (MultiPartParser, FormParser)  # Required for file uploads
     @swagger_auto_schema(
-        request_body=AddProductSerializer,
         manual_parameters=[
-            openapi.Parameter(
-                'picture',
-                openapi.IN_FORM,
-                description="Upload store picture",
-                type=openapi.TYPE_FILE,
-                required=True
-            )
+            openapi.Parameter('name', openapi.IN_FORM, description="Product name", type=openapi.TYPE_STRING, required=True),
+            openapi.Parameter('description', openapi.IN_FORM, description="Product description", type=openapi.TYPE_STRING, required=True),
+            openapi.Parameter('price', openapi.IN_FORM, description="Product price", type=openapi.TYPE_NUMBER, required=True),
+            openapi.Parameter('stock', openapi.IN_FORM, description="Available stock", type=openapi.TYPE_INTEGER, required=True),
+            openapi.Parameter('store', openapi.IN_FORM, description="Store ID", type=openapi.TYPE_INTEGER, required=True),
+            openapi.Parameter('categories', openapi.IN_FORM, description="Category IDs", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER)),
+            openapi.Parameter('images', openapi.IN_FORM, description="Upload product images", type=openapi.TYPE_FILE, required=True),
         ],
-        responses={
-            201: AddProductSerializer,
-            400: 'Bad request, invalid data.',
-        }
+        responses={201: "Product created successfully", 400: "Bad request, invalid data."}
     )
     def post(self, request):
         serializer= AddProductSerializer(data=request.data, context = {'request':request})
