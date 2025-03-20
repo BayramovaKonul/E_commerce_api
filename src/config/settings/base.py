@@ -174,14 +174,21 @@ SIMPLE_JWT = {
 
 
 SWAGGER_SETTINGS = {
-    'SECURITY_DEFINITIONS': {
-        'Bearer': {
-            'type': 'apiKey',
-            'name': 'Authorization',  # This is where the token will be passed
-            'in': 'header'  # The token is sent in the header
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     },
-    'USE_SESSION_AUTH': False, 
+    "USE_SESSION_AUTH": False,
+    "JSON_EDITOR": True,
+    "DEFAULT_MODEL_RENDERING": "example",
+    "DEFAULTS": {
+        "SECURITY_DEFINITIONS": {
+            "api_key": {"type": "apiKey", "name": "Authorization", "in": "header"}
+        }
+    }
 }
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
@@ -229,3 +236,4 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.epicbazaar.store"
 ]
 
+CORS_ALLOW_CREDENTIALS = True
